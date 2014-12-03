@@ -17,20 +17,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
-        android:ems="10"
-        android:id="@+id/editText"
+        android:ems="15"
+        android:id="@+id/act_login_email"
         android:layout_below="@+id/act_login_title"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_marginTop="20dp"
+        android:hint="@string/act_login_email_hint" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/editText2"
-        android:layout_below="@+id/editText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:ems="15"
+        android:id="@+id/act_login_password"
+        android:layout_below="@+id/act_login_email"
+        android:layout_marginTop="20dp"
+        android:hint="@string/act_login_password_hint" />
 
 </RelativeLayout>
