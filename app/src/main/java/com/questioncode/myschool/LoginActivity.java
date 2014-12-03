@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class LoginActivity extends Activity implements View.OnClickListener {
 
@@ -58,8 +61,28 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 Toast.makeText(this, getResources().getString(R.string.act_login_message_password_empty), Toast.LENGTH_LONG).show();
             }
             else {
-                // TODO post a request login to server
+                loginRequest(email, password);
             }
         }
+    }
+
+    public void loginRequest(String email, String password) {
+
+        // TODO test with this URL then use your server URL :
+        String url = "http://api.androidhive.info/volley/person_object.json";
+
+        // Prepare JSON
+        JSONObject json = new JSONObject();
+        try {
+            json.put("email", email);
+            json.put("password", password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, R.string.act_login_json_exception_message, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // TODO Send request and handle response
+
     }
 }
