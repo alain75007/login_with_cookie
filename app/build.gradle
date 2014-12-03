@@ -21,4 +21,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    // Librairie Volley trouvée sur https://github.com/mcxiaoke/android-volley
+    compile 'com.mcxiaoke.volley:library:1.0.+'
+    // Autre manière d'inclure Volley : http://stackoverflow.com/questions/16659620/volley-android-networking-library
 }
