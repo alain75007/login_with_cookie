@@ -10,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/act_login_title"
-        android:text="@string/act_login_title" />
+        android:text="@string/act_login_title"
+        style="@style/h1"/>
 
 </RelativeLayout>
