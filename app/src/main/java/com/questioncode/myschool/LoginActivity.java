@@ -43,6 +43,23 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-
+        if (v.getId() == R.id.act_login_submit_btn) {
+            // Verify email and password
+            String email = ((EditText) findViewById(R.id.act_login_email)).getText().toString().trim();
+            String password = ((EditText) findViewById(R.id.act_login_password)).getText().toString().trim();
+            if (email.isEmpty()) {
+                Toast.makeText(this, getResources().getString(R.string.act_login_message_email_empty), Toast.LENGTH_LONG).show();
+            }
+            else if (!email.contains("@")) {
+                // TODO Better email verification here: http://stackoverflow.com/questions/1819142/how-should-i-validate-an-e-mail-address
+                Toast.makeText(this, getResources().getString(R.string.act_login_message_email_not_good), Toast.LENGTH_LONG).show();
+            }
+            else if (password.isEmpty()) {
+                Toast.makeText(this, getResources().getString(R.string.act_login_message_password_empty), Toast.LENGTH_LONG).show();
+            }
+            else {
+                // TODO post a request login to server
+            }
+        }
     }
 }

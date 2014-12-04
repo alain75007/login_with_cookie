@@ -9,5 +9,8 @@
     <string name="act_login_email_hint">Email</string>
     <string name="act_login_password_hint">Password</string> />
     <string name="act_login_submit_btn">Submit</string>
+    <string name="act_login_message_email_empty">Email is empty!</string>
+    <string name="act_login_message_email_not_good">Email doesn\'t seem to be correct!</string>
+    <string name="act_login_message_password_empty">Password is empty!</string>
 
 </resources>
