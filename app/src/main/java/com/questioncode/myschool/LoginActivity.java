@@ -2,6 +2,7 @@ package com.questioncode.myschool;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +19,8 @@ import org.json.JSONObject;
 
 
 public class LoginActivity extends Activity implements View.OnClickListener {
+
+    private static final String TAG = "XXXXXXXXX";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,19 +113,26 @@ public class LoginActivity extends Activity implements View.OnClickListener {
          *
          */
 
+        // TODO display in progress dialog
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                 url, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
-                // TODO do something
+                Log.d(TAG, response.toString());
+                // TODO start next activity
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                // TODO do something
+                Log.e(TAG, " statusCode=" + error.getCause().getClass().getName());
+                Log.e(TAG, error.toString());
+                // TODO display "Invalid login" if http status 401
+                // TODO display other error messages to user
             }
+
+
         });
 
         /**
