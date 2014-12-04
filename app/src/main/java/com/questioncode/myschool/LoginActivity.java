@@ -10,13 +10,21 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.concurrent.TimeoutException;
 
 
 public class LoginActivity extends Activity implements View.OnClickListener {
@@ -79,6 +87,8 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
         // TODO test with this URL then use your server URL :
         String url = "http://api.androidhive.info/volley/person_object.json";
+        url = "http://10.0.2.2:9000/auth/local";
+
 
         // Prepare JSON
         JSONObject json = new JSONObject();
@@ -119,8 +129,8 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         pDialog.setMessage(getResources().getString(R.string.act_login_progress_message));
         pDialog.show();
 
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                url, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                url, json, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
@@ -132,11 +142,53 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, " statusCode=" + error.getCause().getClass().getName());
                 Log.e(TAG, error.toString());
                 pDialog.hide();
-                // TODO display "Invalid login" if http status 401
-                // TODO display other error messages to user
+
+                /**
+                 *
+                 * Display error message to user
+                 *
+
+                 * AuthFailureError — If you are trying to do Http Basic authentication then this
+                 * error is most likely to come.
+                 *
+                 * NetworkError — Socket disconnection, server down, DNS issues might result in this
+                 * error.
+                 *
+                 * NoConnectionError — Similar to NetworkError, but fires when device does not have
+                 * internet connection, your error handling logic can club NetworkError and
+                 * NoConnectionError together and treat them similarly.
+                 *
+                 * ParseError — While using JsonObjectRequest or JsonArrayRequest if the received
+                 * JSON is malformed then this exception will be generated. If you get this error then
+                 * it is a problem that should be fixed instead of being handled.
+                 *
+                 * ServerError — The server responded with an error, most likely with 4xx or 5xx HTTP
+                 * status codes.
+                 *
+                 * TimeoutError — Socket timeout, either server is too busy to handle the request or
+                 * there is some network latency issue. By default Volley times out the request after
+                 * 2.5 seconds, use a RetryPolicy if you are consistently getting this error.
+                 *
+                 */
+
+                // display "Invalid login" if http status 401
+                NetworkResponse networkResponse = error.networkResponse;
+                if (error instanceof ServerError ||  error instanceof AuthFailureError) {
+                    Toast.makeText(LoginActivity.this, R.string.act_login_message_invalid_email_or_password, Toast.LENGTH_SHORT).show();
+                }
+                else if (error instanceof NetworkError || error instanceof NoConnectionError) {
+                    // display "No Network Connection"
+                    Toast.makeText(LoginActivity.this, R.string.act_login_message_network_error, Toast.LENGTH_SHORT).show();
+                }
+                else if (error instanceof TimeoutError) {
+                    Toast.makeText(LoginActivity.this, R.string.act_login_message_timeout_error, Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    // display error message
+                    Toast.makeText(LoginActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
+                }
             }
 
 

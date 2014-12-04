@@ -14,5 +14,8 @@
     <string name="act_login_message_password_empty">Password is empty!</string>
     <string name="act_login_json_exception_message">Json Exception when building Json data request</string>
     <string name="act_login_progress_message">Loading...</string>
+    <string name="act_login_message_network_error">Network error</string>
+    <string name="act_login_message_invalid_email_or_password">Invalid email or password</string>
+    <string name="act_login_message_timeout_error">Server unreachable</string>
 
 </resources>
