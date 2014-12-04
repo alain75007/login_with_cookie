@@ -33,4 +33,12 @@
         android:layout_marginTop="20dp"
         android:hint="@string/act_login_password_hint" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/act_login_submit_btn"
+        android:id="@+id/act_login_submit_btn"
+        android:layout_below="@+id/act_login_password"
+        android:layout_marginTop="20dp" />
+
 </RelativeLayout>
