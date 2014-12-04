@@ -8,6 +8,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -82,7 +87,51 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             return;
         }
 
-        // TODO Send request and handle response
+        /**
+         * Volley
+         *
+         *  JsonObjectRequest to send and receive JSON object
+         *
+         *  JsonObjectRequest
+         *  Parameters:
+         *      method - the HTTP method to use
+         *      url - URL to fetch the JSON from
+         *      jsonRequest - A JSONObject to post with the request. Null is allowed and indicates no parameters will be posted along with request.
+         *      listener - Listener to receive the JSON response
+         *      errorListener - Error listener, or null to ignore errors.
+         *
+         *  JsonArrayRequest to receive JSON Array
+         *  Parameters:
+         *      url - URL to fetch the JSON from
+         *      listener - Listener to receive the JSON response
+         *      errorListener - Error listener, or null to ignore errors.
+         *
+         *  StringRequest class will be used to fetch any kind of string data. The response can be json, xml, html or plain text
+         *
+         */
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                url, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                // TODO do something
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // TODO do something
+            }
+        });
+
+        /**
+         * Adding request to request queue
+         */
+
+        // This can be used to cancel the request if needed
+        String tag_json_obj = "json_obj_req";
+        MySingleton.getInstance(this).addToRequestQueue(jsonObjReq, tag_json_obj);
 
     }
 }
