@@ -1,6 +1,7 @@
 package com.questioncode.myschool;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -113,13 +114,18 @@ public class LoginActivity extends Activity implements View.OnClickListener {
          *
          */
 
-        // TODO display in progress dialog
+        // Display in progress dialog
+        final ProgressDialog pDialog = new ProgressDialog(this);
+        pDialog.setMessage(getResources().getString(R.string.act_login_progress_message));
+        pDialog.show();
+
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                 url, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
                 Log.d(TAG, response.toString());
+                pDialog.hide();
                 // TODO start next activity
             }
         }, new Response.ErrorListener() {
@@ -128,6 +134,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, " statusCode=" + error.getCause().getClass().getName());
                 Log.e(TAG, error.toString());
+                pDialog.hide();
                 // TODO display "Invalid login" if http status 401
                 // TODO display other error messages to user
             }

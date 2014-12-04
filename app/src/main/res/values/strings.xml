@@ -13,5 +13,6 @@
     <string name="act_login_message_email_not_good">Email doesn\'t seem to be correct!</string>
     <string name="act_login_message_password_empty">Password is empty!</string>
     <string name="act_login_json_exception_message">Json Exception when building Json data request</string>
+    <string name="act_login_progress_message">Loading...</string>
 
 </resources>
