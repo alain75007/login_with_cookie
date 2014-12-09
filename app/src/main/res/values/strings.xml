@@ -17,5 +17,6 @@
     <string name="act_login_message_network_error">Network error</string>
     <string name="act_login_message_invalid_email_or_password">Invalid email or password</string>
     <string name="act_login_message_timeout_error">Server unreachable</string>
+    <string name="act_login_message_authentication_error">Authentication error</string>
 
 </resources>

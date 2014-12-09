@@ -20,16 +20,21 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 
+import org.apache.http.client.CookieStore;
+import org.apache.http.cookie.Cookie;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.concurrent.TimeoutException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class LoginActivity extends Activity implements View.OnClickListener {
 
     private static final String TAG = "XXXXXXXXX";
+    private static Globals globals = Globals.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,12 +88,9 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    public void loginRequest(String email, String password) {
+    public void loginRequest(final String email, final String password) {
 
         // TODO test with this URL then use your server URL :
-        String url = "http://api.androidhive.info/volley/person_object.json";
-        url = "http://10.0.2.2:9000/auth/local";
-
 
         // Prepare JSON
         JSONObject json = new JSONObject();
@@ -129,14 +131,24 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         pDialog.setMessage(getResources().getString(R.string.act_login_progress_message));
         pDialog.show();
 
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                url, json, new Response.Listener<JSONObject>() {
+        final StringRequest stringRequest = new StringRequest(
+                Request.Method.POST,
+                globals.AUTH_URL,
+                new Response.Listener<String>() {
 
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(String response) {
                 Log.d(TAG, response.toString());
                 pDialog.hide();
-                // TODO start next activity
+                CookieStore cs = MySingleton.getInstance(LoginActivity.this).getmHttpClient().getCookieStore();
+                for (Cookie cookie : cs.getCookies()) {
+                    Log.d(TAG,"Found cookie " +  cookie.toString());
+                };
+
+
+                testProtected(response);
+                // TODO start next activityET
+
             }
         }, new Response.ErrorListener() {
 
@@ -192,7 +204,23 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             }
 
 
-        });
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                params.put("password", password);
+                return params;
+            }
+
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Content-Type", "application/x-www-form-urlencoded");
+                return params;
+            }
+        };
 
         /**
          * Adding request to request queue
@@ -200,7 +228,115 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
         // This can be used to cancel the request if needed
         String tag_json_obj = "json_obj_req";
-        MySingleton.getInstance(this).addToRequestQueue(jsonObjReq, tag_json_obj);
+        MySingleton.getInstance(this).addToRequestQueue(stringRequest, tag_json_obj);
 
     }
+
+    private void testProtected(String response) {
+        // TODO test with this URL then use your server URL :
+
+            /**
+             * Volley
+             *
+             *  JsonObjectRequest to send and receive JSON object
+             *
+             *  JsonObjectRequest
+             *  Parameters:
+             *      method - the HTTP method to use
+             *      url - URL to fetch the JSON from
+             *      jsonRequest - A JSONObject to post with the request. Null is allowed and indicates no parameters will be posted along with request.
+             *      listener - Listener to receive the JSON response
+             *      errorListener - Error listener, or null to ignore errors.
+             *
+             *  JsonArrayRequest to receive JSON Array
+             *  Parameters:
+             *      url - URL to fetch the JSON from
+             *      listener - Listener to receive the JSON response
+             *      errorListener - Error listener, or null to ignore errors.
+             *
+             *  StringRequest class will be used to fetch any kind of string data. The response can be json, xml, html or plain text
+             *
+             */
+
+            // Display in progress dialog
+            final ProgressDialog pDialog = new ProgressDialog(this);
+            pDialog.setMessage(getResources().getString(R.string.act_login_progress_message));
+            pDialog.show();
+
+            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                    globals.PROTECTED_URL, null, new Response.Listener<JSONObject>() {
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d(TAG, response.toString());
+                    pDialog.hide();
+                    // TODO start next activityET
+
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, error.toString());
+                    pDialog.hide();
+
+                    /**
+                     *
+                     * Display error message to user
+                     *
+
+                     * AuthFailureError — If you are trying to do Http Basic authentication then this
+                     * error is most likely to come.
+                     *
+                     * NetworkError — Socket disconnection, server down, DNS issues might result in this
+                     * error.
+                     *
+                     * NoConnectionError — Similar to NetworkError, but fires when device does not have
+                     * internet connection, your error handling logic can club NetworkError and
+                     * NoConnectionError together and treat them similarly.
+                     *
+                     * ParseError — While using JsonObjectRequest or JsonArrayRequest if the received
+                     * JSON is malformed then this exception will be generated. If you get this error then
+                     * it is a problem that should be fixed instead of being handled.
+                     *
+                     * ServerError — The server responded with an error, most likely with 4xx or 5xx HTTP
+                     * status codes.
+                     *
+                     * TimeoutError — Socket timeout, either server is too busy to handle the request or
+                     * there is some network latency issue. By default Volley times out the request after
+                     * 2.5 seconds, use a RetryPolicy if you are consistently getting this error.
+                     *
+                     */
+
+                    // display "Invalid login" if http status 401
+                    NetworkResponse networkResponse = error.networkResponse;
+                    if (error instanceof ServerError ||  error instanceof AuthFailureError) {
+                        Toast.makeText(LoginActivity.this, R.string.act_login_message_authentication_error, Toast.LENGTH_SHORT).show();
+                    }
+                    else if (error instanceof NetworkError || error instanceof NoConnectionError) {
+                        // display "No Network Connection"
+                        Toast.makeText(LoginActivity.this, R.string.act_login_message_network_error, Toast.LENGTH_SHORT).show();
+                    }
+                    else if (error instanceof TimeoutError) {
+                        Toast.makeText(LoginActivity.this, R.string.act_login_message_timeout_error, Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        // display error message
+                        Toast.makeText(LoginActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+
+            });
+
+            /**
+             * Adding request to request queue
+             */
+
+            // This can be used to cancel the request if needed
+            String tag_json_obj = "json_obj_req";
+            MySingleton.getInstance(this).addToRequestQueue(jsonObjReq, tag_json_obj);
+
+        }
+
 }
